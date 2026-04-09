@@ -1,53 +1,76 @@
 "use client";
-
 import { useState } from "react";
+import { supabase } from "@/lib/supabase"; // Controlla che questo non sia rosso
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Funzione per il Login normale
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    if (res.ok) {
-      router.push("/");
-      router.refresh();
+    if (error) {
+      alert("Errore: " + error.message);
     } else {
-      setError("Credenziali non valide");
+      router.push("/");
+      router.refresh(); // Forza il middleware a ricontrollare la sessione
     }
+    setLoading(false);
+  };
+
+  // Funzione per il Reset Password (quella che ti dava errore)
+  const handleReset = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!email) return alert("Inserisci la tua email nel campo sopra per ricevere il link di reset.");
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://ap-rent-admin.vercel.app/reset-password',
+    });
+
+    if (error) alert(error.message);
+    else alert("Controlla la mail! Abbiamo inviato il link di reset.");
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px", width: "300px" }}>
-        <h1>Login Admin</h1>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
+    <div style={{ padding: "20px" }}>
+      <h1>Login Admin</h1>
+      <form onSubmit={handleLogin}>
+        <input 
+          type="email" 
+          placeholder="Email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+        <br />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          required 
         />
-        <button type="submit">Accedi</button>
+        <br />
+        <button type="submit" disabled={loading}>
+          {loading ? "Accesso in corso..." : "Accedi"}
+        </button>
       </form>
+      
+      <button 
+        onClick={handleReset} 
+        style={{ marginTop: "10px", background: "none", border: "none", color: "blue", cursor: "pointer", textDecoration: "underline" }}
+      >
+        Password dimenticata?
+      </button>
     </div>
   );
 }
