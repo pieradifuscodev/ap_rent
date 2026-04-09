@@ -1,11 +1,9 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
+  let supabaseResponse = NextResponse.next({
+    request,
   })
 
   const supabase = createServerClient(
@@ -13,49 +11,42 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
+        getAll() {
+          return request.cookies.getAll()
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({ name, value, ...options })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({
+            request,
           })
-          response.cookies.set({ name, value, ...options })
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({ name, value: '', ...options })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({ name, value: '', ...options })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
         },
       },
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  // Recupera l'utente (più sicuro di getSession nel middleware)
+  const { data: { user } } = await supabase.auth.getUser()
 
   const hostname = request.headers.get('host')
   const url = request.nextUrl
 
   // Gestione Sottodominio ADMIN
-  if (hostname === 'ap-rent-admin.vercel.app') {
-    // Permetti sempre l'accesso a login e reset-password
+  if (hostname === 'ap-rent-admin.vercel.app' || hostname?.includes('localhost')) {
+    
+    // 1. Permetti sempre l'accesso a login e reset-password
     if (url.pathname === '/login' || url.pathname === '/reset-password' || url.pathname.startsWith('/api/auth')) {
       return NextResponse.rewrite(new URL(`/admin${url.pathname}`, request.url))
     }
 
-    // Se NON c'è una sessione, rimanda al login
-    if (!session) {
+    // 2. Se NON c'è un utente loggato, rimanda al login
+    if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Se loggato, mostra le pagine admin
+    // 3. Se loggato, mostra le pagine admin
     return NextResponse.rewrite(new URL(`/admin${url.pathname}`, request.url))
   }
 
@@ -65,6 +56,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',
   ],
 }
