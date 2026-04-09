@@ -25,17 +25,33 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 function middleware(request) {
     const hostname = request.headers.get('host');
+    const isAuthenticated = request.cookies.get('admin_session');
     const url = request.nextUrl;
-    // Se l'utente entra da ap-rent-admin.vercel.app o localhost:3000 con prefisso admin
+    // Se l'host è quello dell'admin
     if (hostname === 'ap-rent-admin.vercel.app') {
+        // 1. Permetti accesso a login e API auth
+        if (url.pathname === '/login' || url.pathname.startsWith('/api/auth')) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].rewrite(new URL(`/admin${url.pathname}`, request.url));
+        }
+        // 2. Protezione: se non autenticato, vai a /login
+        if (!isAuthenticated) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL('/login', request.url));
+        }
+        // 3. Se autenticato, mostra le pagine della cartella /admin
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].rewrite(new URL(`/admin${url.pathname}`, request.url));
     }
-    // Per il dominio principale o localhost
+    // Altrimenti (Sito pubblico), mostra le pagine della cartella /site
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].rewrite(new URL(`/site${url.pathname}`, request.url));
 }
 const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico).*)'
+        /*
+     * Esclude tutti i percorsi che iniziano con:
+     * - api (rotte API)
+     * - _next/static (file statici)
+     * - _next/image (ottimizzazione immagini)
+     * - favicon.ico (icona browser)
+     */ '/((?!api|_next/static|_next/image|favicon.ico).*)'
     ]
 };
 }),
