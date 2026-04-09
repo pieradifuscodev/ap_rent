@@ -9,23 +9,34 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Funzione per il Login normale
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  e.preventDefault();
+  setLoading(true);
 
-    if (error) {
-      alert("Errore: " + error.message);
-    } else {
-      router.push("/");
-      router.refresh(); // Forza il middleware a ricontrollare la sessione
-    }
+  // 1. Tenta il login
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    console.error("Errore Supabase:", error.message);
+    alert("Credenziali non valide o utente non confermato");
     setLoading(false);
-  };
+    return;
+  }
+
+  // 2. Se arriviamo qui, il login è riuscito lato Supabase.
+  // Verifichiamo se la sessione esiste
+  if (data.session) {
+    console.log("Sessione creata con successo!");
+    // Forza il refresh totale per far leggere i cookie al proxy
+    window.location.href = "/";
+  } else {
+    alert("Sessione non stabilita. Riprova.");
+    setLoading(false);
+  }
+};
 
   // Funzione per il Reset Password (quella che ti dava errore)
   const handleReset = async (e: React.MouseEvent) => {

@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -33,6 +33,12 @@ export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host')
   const url = request.nextUrl
 
+
+  console.log("--- DEBUG MIDDLEWARE ---")
+  console.log("Host rilevato:", hostname)
+  console.log("Path richiesto:", url.pathname)
+  console.log("Utente loggato:", user ? user.email : "NESSUNO")
+  console.log("------------------------")
   // Gestione Sottodominio ADMIN
   if (hostname === 'ap-rent-admin.vercel.app' || hostname?.includes('localhost')) {
     
