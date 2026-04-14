@@ -12,14 +12,28 @@ export const vehicleService = {
     return data || [];
   },
 
-  async create(vehicleData: Omit<Veicolo, 'id' | 'created_at'>): Promise<Veicolo> {
+  async create(vehicleData: any) {
+    // Pulizia date (come fatto prima)
+    const formattedData = {
+      ...vehicleData,
+      immatricolazione: vehicleData.immatricolazione || null,
+      scadenza_assicurazione: vehicleData.scadenza_assicurazione || null,
+      scadenza_bollo: vehicleData.scadenza_bollo || null,
+      scadenza_revisione: vehicleData.scadenza_revisione || null,
+    };
+
     const { data, error } = await supabase
       .from("vehicles")
-      .insert([vehicleData])
-      .select()
-      .single(); // Restituisce l'oggetto creato invece di un array
-    
-    if (error) throw error;
+      .insert([formattedData])
+      .select();
+
+    if (error) {
+      // Codice 23505 = Unique Violation (Targa già esistente)
+      if (error.code === '23505') {
+        throw new Error("Targa già registrata nel sistema");
+      }
+      throw new Error(error.message);
+    }
     return data;
   },
 

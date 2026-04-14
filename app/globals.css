@@ -1,46 +1,109 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --primary: #2563eb;
+  --background: #f8fafc; 
+  --foreground: #000000;
+  --admin-border: #cbd5e1; 
+  --card-bg: #ffffff;
+}
+
+/* Blocchiamo lo stile Light ovunque */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #f8fafc;
+    --foreground: #000000;
+    --admin-border: #cbd5e1;
+    --card-bg: #ffffff;
+  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans), sans-serif;
   margin: 0;
-  -webkit-font-smoothing: antialiased;
 }
 
-/* Componenti Custom */
+/* --- COMPONENTI UI --- */
+
 .admin-card {
-  @apply bg-white p-6 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.06)] border border-slate-200/60 transition-all;
-}
-
-.admin-card-stat {
-  @apply admin-card border-l-4 flex flex-col justify-between min-h-[120px];
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 2rem;
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
 }
 
 .admin-label {
-  @apply block text-[11px] font-bold text-slate-400 uppercase tracking-[0.05em] mb-1.5;
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #475569;
+  margin-bottom: 8px;
+  padding-left: 4px;
 }
 
 .admin-input {
-  @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 
-         focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 
-         outline-none transition-all text-sm placeholder:text-slate-400;
+  display: block;
+  width: 100%;
+  background-color: #ffffff !important;
+  color: #000000 !important; /* TESTO NERO ASSOLUTO */
+  border: 1.5px solid #cbd5e1 !important; 
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-input:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.admin-input::placeholder {
+  color: #94a3b8 !important;
 }
 
 .btn-primary {
-  @apply bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl 
-         font-semibold text-sm transition-all shadow-sm shadow-blue-200 
-         active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
 }
 
 .btn-secondary {
-  @apply bg-white hover:bg-slate-50 text-slate-700 px-5 py-2.5 rounded-xl 
-         border border-slate-200 font-semibold text-sm transition-all 
-         active:scale-[0.98] shadow-sm;
+  background-color: transparent;
+  color: #64748b;
+  padding: 14px 28px;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+select.admin-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2rem;
 }
