@@ -19,7 +19,7 @@ export default function ActionSidebar({
 }: ActionSidebarProps) {
   return (
     <div className="w-full xl:w-96 sticky top-10 space-y-6">
-      <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl space-y-6">
+      <div className="bg-white p-8 rounded-4xl border border-slate-200 shadow-xl space-y-6">
         <div className="space-y-1 text-center">
           <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">Azioni Flotta</h4>
         </div>
@@ -45,7 +45,7 @@ export default function ActionSidebar({
       </div>
 
       {infoText && (
-        <div className="p-8 bg-blue-50 rounded-[2rem] border border-blue-100">
+        <div className="p-8 bg-blue-50 rounded-4xl border border-blue-100">
           <p className="text-[11px] font-bold text-blue-600 leading-relaxed uppercase tracking-tighter">
             {infoText}
           </p>

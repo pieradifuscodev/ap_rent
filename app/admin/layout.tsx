@@ -30,7 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </h2>
         </div>
         
-        <nav className="flex-grow px-4">
+        <nav className="grow px-4">
           <ul className="space-y-2">
             <li>
               <Link href="/admin/veicoli" 

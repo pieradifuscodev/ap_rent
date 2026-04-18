@@ -38,6 +38,7 @@ export default function ClientiPage() {
       try {
         await handleDeleteClient(id);
         toast.success("Cliente rimosso correttamente");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         toast.error("Impossibile eliminare il cliente");
       }
@@ -101,7 +102,7 @@ export default function ClientiPage() {
             {tab.icon}
             {tab.label}
             {filter === tab.id && (
-              <div className="absolute bottom-[-1px] left-0 w-full h-0.5 bg-blue-600 rounded-full" />
+              <div className="absolute -bottom-px left-0 w-full h-0.5 bg-blue-600 rounded-full" />
             )}
           </button>
         ))}
@@ -116,7 +117,7 @@ export default function ClientiPage() {
             onDelete={onDeleteConfirm}
           />
         ) : !loading && (
-          <div className="py-20 text-center bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
+          <div className="py-20 text-center bg-slate-50 rounded-4xl border-2 border-dashed border-slate-200">
             <Search size={40} className="mx-auto text-slate-200 mb-4" />
             <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">
               Nessun cliente trovato

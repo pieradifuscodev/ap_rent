@@ -15,7 +15,8 @@ export default function NuovoVeicoloPage() {
       router.refresh();
       router.push("/admin/veicoli");
     } catch (error) {
-      toast.error(error.message || "Errore durante il salvataggio");
+      const errorMessage = error instanceof Error ? error.message : "Errore durante il salvataggio";
+      toast.error(errorMessage);
       console.error("Salvataggio fallito:", error);
     }
   };

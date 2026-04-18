@@ -28,6 +28,7 @@ export default function ModificaVeicoloPage() {
 
         if (error) throw error;
         setVehicle(data);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         toast.error("Impossibile recuperare i dati del veicolo");
         router.push("/admin/veicoli");

@@ -48,6 +48,7 @@ export const useClients = () => {
     try {
       await clientService.delete(id);
       setClients((prev) => prev.filter((c) => c.id !== id));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       alert("Errore durante l'eliminazione");
     }

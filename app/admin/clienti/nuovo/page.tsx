@@ -16,14 +16,39 @@ export default function NuovoClientePage() {
       router.refresh();
       router.push("/admin/clienti");
     } catch (error: any) {
-      toast.error(error.message || "Errore durante il salvataggio");
-      console.error("Salvataggio fallito:", error);
+      // --- LOGICA FEEDBACK UMANO ---
+      let friendlyMessage = "Errore durante il salvataggio";
+
+      // Se l'errore viene dai vincoli SQL (Constraints)
+      if (error.code === '23514' || error.message?.includes('violates check constraint')) {
+        if (error.message?.includes('check_cap_smart')) {
+          friendlyMessage = "Il CAP non è valido. Per l'Italia deve essere di 5 cifre.";
+        } else if (error.message?.includes('check_provincia_smart')) {
+          friendlyMessage = "La Provincia non è valida. Usa la sigla di 2 lettere (es: RM).";
+        } else if (error.message?.includes('check_cf_length')) {
+          friendlyMessage = "Il Codice Fiscale è troppo lungo (max 16 caratteri).";
+        } else if (error.message?.includes('check_email_format')) {
+          friendlyMessage = "L'indirizzo Email non sembra corretto.";
+        } else {
+          friendlyMessage = "Alcuni dati non rispettano il formato richiesto.";
+        }
+      } 
+      // Errore di connessione o generico
+      else if (error.message?.includes('fetch')) {
+        friendlyMessage = "Problema di connessione al database. Riprova.";
+      }
+
+      toast.error(friendlyMessage, {
+        description: "Controlla i campi evidenziati e riprova.",
+        duration: 5000,
+      });
+      
+      console.error("Dettaglio tecnico per developer:", error);
     }
   };
 
   return (
     <div className="w-full space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* HEADER COERENTE CON VEICOLI */}
       <div className="flex flex-col gap-2">
         <button 
           onClick={() => router.push("/admin/clienti")} 
@@ -39,7 +64,6 @@ export default function NuovoClientePage() {
         </p>
       </div>
 
-      {/* FORM SENZA COMPONENTI UI ASTRATTI */}
       <ClientForm 
         onSubmit={onSave} 
         loading={loading} 
