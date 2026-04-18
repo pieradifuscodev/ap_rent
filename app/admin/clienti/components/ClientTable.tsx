@@ -108,9 +108,6 @@ export default function ClientTable({ clients, loading, onDelete }: ClientTableP
                     <CreditCard size={14} className={getDeadlineStyles(c.patente_scadenza)} />
                     <span className="text-[11px] font-bold text-slate-700 uppercase">Pat. {c.patente_numero || '---'}</span>
                   </div>
-                  {c.patente_categoria && (
-                    <span className="text-[9px] font-black text-slate-300 ml-5 uppercase">Cat. {c.patente_categoria}</span>
-                  )}
                 </div>
               </div>
             </td>

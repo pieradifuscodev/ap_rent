@@ -56,12 +56,17 @@ export default function ClientForm({ initialData, onSubmit, loading }: any) {
           <div className="bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm">
             <label className={labelClass}>Tipo Cittadinanza / Provenienza Documento</label>
             <div className="flex gap-2 p-1.5 bg-slate-100 rounded-2xl">
-              {['ITA', 'EU', 'EXTRA'].map((t) => (
+              {(['ITA', 'EU', 'EXTRA'] as const).map((t) => (
                 <button 
                   key={t} 
                   type="button" 
-                  onClick={() => { setTipoCittadinanza(t); setFormData({...formData, tipo_cittadinanza: t}) }}
-                  className={`flex-1 py-3 rounded-xl text-[10px] font-black transition-all ${tipoCittadinanza === t ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                  onClick={() => { 
+                    setTipoCittadinanza(t); 
+                    setFormData({ ...formData, tipo_cittadinanza: t }); 
+                  }} 
+                  className={`flex-1 py-3 rounded-xl text-[10px] font-black transition-all ${
+                    tipoCittadinanza === t ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
                   {t === 'ITA' ? '🇮🇹 ITA' : t === 'EU' ? '🇪🇺 EU' : '🌎 EXTRA'}
                 </button>
@@ -98,7 +103,7 @@ export default function ClientForm({ initialData, onSubmit, loading }: any) {
               ) : (
                 <div className="space-y-4">
                   <div className="relative aspect-video bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 group">
-                    {patenteUrlView ? <img src={patenteUrlView} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-slate-300" /></div>}
+                    {patenteUrlView ? <img src={patenteUrlView} className="w-full h-full object-cover" alt="Patente" /> : <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-slate-300" /></div>}
                     <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button type="button" onClick={() => setFormData({...formData, patente_url: ''})} className="p-3 bg-rose-500 text-white rounded-xl hover:scale-110 transition-transform"><Trash2 size={20} /></button>
                     </div>
@@ -117,12 +122,12 @@ export default function ClientForm({ initialData, onSubmit, loading }: any) {
               {!formData.documento_url ? (
                 <div onClick={() => documentoInputRef.current?.click()} className="border-2 border-dashed border-slate-200 rounded-3xl p-10 flex flex-col items-center gap-3 cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all">
                   <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600"><UploadCloud size={24} /></div>
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-tight">Carica Identità</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-tight text-center">Carica Identità</span>
                 </div>
               ) : (
                 <div className="space-y-4">
                   <div className="relative aspect-video bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 group">
-                    {documentoUrlView ? <img src={documentoUrlView} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-slate-300" /></div>}
+                    {documentoUrlView ? <img src={documentoUrlView} className="w-full h-full object-cover" alt="Documento" /> : <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-slate-300" /></div>}
                     <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button type="button" onClick={() => setFormData({...formData, documento_url: ''})} className="p-3 bg-rose-500 text-white rounded-xl hover:scale-110 transition-transform"><Trash2 size={20} /></button>
                     </div>
@@ -141,8 +146,17 @@ export default function ClientForm({ initialData, onSubmit, loading }: any) {
             <h2 className="text-lg font-black uppercase tracking-tighter text-slate-900 border-b border-slate-50 pb-4">Anagrafica Nascita</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2 flex gap-2 p-1 bg-slate-100 rounded-xl w-fit">
-                {['M', 'F'].map((s) => (
-                  <button key={s} type="button" onClick={() => setSessoLocale(s)} className={`px-6 py-2 rounded-lg text-[10px] font-black transition-all ${sessoLocale === s ? "bg-white text-blue-600 shadow-sm" : "text-slate-400"}`}>{s === 'M' ? "UOMO" : "DONNA"}</button>
+                {(['M', 'F'] as const).map((s) => (
+                  <button 
+                    key={s} 
+                    type="button" 
+                    onClick={() => setSessoLocale(s)} 
+                    className={`px-6 py-2 rounded-lg text-[10px] font-black transition-all ${
+                      sessoLocale === s ? "bg-white text-blue-600 shadow-sm" : "text-slate-400"
+                    }`}
+                  >
+                    {s === 'M' ? "UOMO" : "DONNA"}
+                  </button>
                 ))}
               </div>
               <SmartInput {...sharedProps} label="Nome" required isAiField value={formData.nome} onChange={(e:any) => setFormData({...formData, nome: e.target.value.toUpperCase()})} />

@@ -22,35 +22,41 @@ export const useClients = () => {
     loadClients();
   }, [loadClients]);
 
- const handleAddClient = async (formData: Omit<Cliente, "id" | "created_at">) => {
-  setLoading(true);
-  try {
-    const cleanedData = {
-      ...formData,
-      nome: formData.nome.toUpperCase(),
-      // Unifichiamo la logica del cognome: se è azienda va a null, altrimenti maiuscolo
-      cognome: formData.tipo === 'azienda' ? null : (formData.cognome?.toUpperCase() || null),
-      codice_fiscale: formData.codice_fiscale?.replace(/\s+/g, '').toUpperCase() || null,
-      partita_iva: formData.partita_iva?.replace(/\s+/g, '') || null,
-      email: formData.email?.toLowerCase().trim() || null,
-    };
+  const handleAddClient = async (formData: Omit<Cliente, "id" | "created_at">) => {
+    setLoading(true);
+    try {
+      // Determiniamo se è un'azienda in base alla presenza della Partita IVA
+      const isAzienda = formData.partita_iva && formData.partita_iva.trim() !== "";
 
-    await clientService.create(cleanedData as Cliente);
-    await loadClients();
-  } catch (error) {
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
+      const cleanedData = {
+        ...formData,
+        nome: formData.nome.toUpperCase(),
+        // Se è azienda il cognome va a null, altrimenti maiuscolo (o null se mancante)
+        cognome: isAzienda ? null : (formData.cognome?.toUpperCase() || null),
+        codice_fiscale: formData.codice_fiscale?.replace(/\s+/g, '').toUpperCase() || null,
+        partita_iva: formData.partita_iva?.replace(/\s+/g, '') || null,
+        email: formData.email?.toLowerCase().trim() || null,
+        // Pulizia spazi per telefono e cap
+        telefono: formData.telefono?.trim() || null,
+        cap: formData.cap?.trim() || null,
+      };
+
+      await clientService.create(cleanedData as Cliente);
+      await loadClients();
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDeleteClient = async (id: string) => {
     try {
       await clientService.delete(id);
       setClients((prev) => prev.filter((c) => c.id !== id));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      alert("Errore durante l'eliminazione");
+      console.error(error);
+      throw error;
     }
   };
 
