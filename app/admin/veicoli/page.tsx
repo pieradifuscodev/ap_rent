@@ -28,6 +28,7 @@ export default function VeicoliPage() {
       try {
         await handleDeleteVehicle(id);
         toast.success("Veicolo rimosso correttamente");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         toast.error("Impossibile eliminare il veicolo");
       }
@@ -98,7 +99,7 @@ export default function VeicoliPage() {
             {tab.icon}
             {tab.label}
             {filter === tab.id && (
-              <div className="absolute bottom-[-1px] left-0 w-full h-0.5 bg-blue-600 rounded-full" />
+              <div className="absolute -bottom-px left-0 w-full h-0.5 bg-blue-600 rounded-full" />
             )}
           </button>
         ))}
@@ -114,10 +115,10 @@ export default function VeicoliPage() {
             currentFilter={filter}
           />
         ) : !loading && (
-          <div className="py-20 text-center bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
+          <div className="py-20 text-center bg-slate-50 rounded-4xl border-2 border-dashed border-slate-200">
             <Search size={40} className="mx-auto text-slate-200 mb-4" />
             <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">
-              Nessun mezzo trovato per "{searchQuery}"
+              Nessun mezzo trovato per "{searchQuery}&quot;
             </p>
           </div>
         )}
